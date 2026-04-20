@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ezekiel — Treinos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+          --bg: #080c10;
+          --surface: #0e1318;
+          --card: #131920;
+          --border: rgba(255,255,255,0.07);
+          --border-strong: rgba(255,255,255,0.13);
+          --green: #00e676;
+          --green-dim: rgba(0,230,118,0.1);
+          --red: #ff5252;
+          --red-dim: rgba(255,82,82,0.1);
+          --text: #f0f4f8;
+          --muted: #5a6a7a;
+          --subtle: #1a2330;
+        }
+
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* AUTH */
+        #auth-screen {
+          min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem;
+          background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,230,118,0.05) 0%, transparent 70%), var(--bg);
+        }
+        .auth-box { width: 100%; max-width: 400px; }
+        .auth-logo { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.2rem; }
+        .auth-logo span { color: var(--green); }
+        .auth-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 2.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
+        .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+        .auth-tab { padding: 0.7rem 1.5rem; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
+        .auth-tab.active { color: var(--green); border-bottom-color: var(--green); }
+        .field-group { margin-bottom: 1.25rem; }
+        .field-group label { display: block; font-size: 0.7rem; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .field-group input { width: 100%; padding: 0.85rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+        .field-group input:focus { border-color: var(--green); }
+        .btn-primary { width: 100%; padding: 0.9rem; background: var(--green); color: #000; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s; margin-top: 0.5rem; }
+        .btn-primary:hover { opacity: 0.88; }
+        .auth-msg { margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; display: none; }
+        .auth-msg.error { background: rgba(255,82,82,0.1); border: 1px solid rgba(255,82,82,0.2); color: #ff8080; }
+        .auth-msg.success { background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2); color: var(--green); }
+
+        /* APP */
+        #app-screen { display: none; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; }
+        .topbar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; }
+        .topbar-logo span { color: var(--green); }
+        .topbar-user { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--muted); }
+        .btn-logout { padding: 0.35rem 0.85rem; background: transparent; border: 1px solid var(--border-strong); border-radius: 6px; color: var(--muted); font-size: 0.78rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+        .main { padding: 1.5rem; max-width: 600px; margin: 0 auto; padding-bottom: 7rem; }
+        .section-label { font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.9rem; }
+
+        /* DAYS */
+        .days-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.65rem; margin-bottom: 2rem; }
+        .day-btn { padding: 0.9rem 0.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 600; text-align: center; cursor: pointer; transition: all 0.2s; line-height: 1.4; }
+        .day-btn .day-sub { display: block; font-size: 0.6rem; font-weight: 400; color: var(--muted); font-family: 'DM Sans', sans-serif; margin-top: 0.2rem; }
+        .day-btn:hover:not(.rest) { border-color: rgba(0,230,118,0.4); }
+        .day-btn.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+        .day-btn.active .day-sub { color: rgba(0,230,118,0.55); }
+        .day-btn.rest { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+        /* EXERCISES */
+        .exercises-wrap { display: flex; flex-direction: column; gap: 0; }
+        .exercise-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s; margin-bottom: 0.65rem; }
+        .exercise-card.done { border-color: rgba(0,230,118,0.35); background: rgba(0,230,118,0.03); }
+
+        .ex-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.1rem; cursor: pointer; user-select: none; gap: 0.75rem; }
+        .ex-left { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+        .ex-name { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .exercise-card.done .ex-name { text-decoration: line-through; color: var(--muted); }
+        .ex-actions { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+        .check-btn { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border-strong); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; }
+        .check-btn.checked { background: var(--green); border-color: var(--green); }
+        .check-btn.checked::after { content: '✓'; font-size: 12px; color: #000; font-weight: 800; }
+
+        .del-btn { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; color: var(--muted); font-size: 14px; line-height: 1; flex-shrink: 0; }
+        .del-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+
+        .chevron { width: 14px; height: 14px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); transition: transform 0.2s; margin-top: -2px; flex-shrink: 0; }
+        .exercise-card.open .chevron { transform: rotate(-135deg); margin-top: 2px; }
+
+        .ex-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .exercise-card.open .ex-body { max-height: 300px; }
+        .ex-fields { padding: 0 1.1rem 1.1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .ex-fields .obs-f { grid-column: 1 / -1; }
+        .ex-f label { display: block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
+        .ex-f input { width: 100%; padding: 0.6rem 0.7rem; background: var(--subtle); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+        .ex-f input:focus { border-color: var(--green); }
+
+        /* ADD EXERCISE */
+        .add-exercise-row { display: flex; gap: 0.6rem; margin-top: 0.25rem; margin-bottom: 1.5rem; }
+        .add-exercise-input { flex: 1; padding: 0.75rem 1rem; background: var(--card); border: 1px dashed var(--border-strong); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .add-exercise-input:focus { border-color: var(--green); border-style: solid; }
+        .add-exercise-input::placeholder { color: var(--muted); }
+        .btn-add { padding: 0.75rem 1.1rem; background: var(--green-dim); border: 1px solid rgba(0,230,118,0.3); border-radius: 10px; color: var(--green); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .btn-add:hover { background: rgba(0,230,118,0.18); }
+
+        /* EMPTY */
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: 0.88rem; }
+
+        /* FINISH */
+        .finish-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 1rem 1.5rem; background: linear-gradient(to top, var(--bg) 65%, transparent); }
+        .btn-finish { width: 100%; max-width: 600px; margin: 0 auto; display: block; padding: 1rem; background: var(--green); color: #000; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 12px; cursor: pointer; transition: opacity 0.2s; }
+        .btn-finish:hover { opacity: 0.88; }
+
+        /* LOADING */
+        .loading { padding: 1.5rem 0; color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+        /* MODAL CONFIRM */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 999; padding: 1rem; display: none; }
+        .modal-box { background: var(--card); border: 1px solid var(--border-strong); border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 320px; }
+        .modal-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .modal-text { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+        .modal-btns { display: flex; gap: 0.75rem; }
+        .modal-btn-cancel { flex: 1; padding: 0.75rem; background: transparent; border: 1px solid var(--border-strong); border-radius: 8px; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; cursor: pointer; transition: all 0.2s; }
+        .modal-btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+        .modal-btn-confirm { flex: 1; padding: 0.75rem; background: var(--red-dim); border: 1px solid rgba(255,82,82,0.3); border-radius: 8px; color: var(--red); font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .modal-btn-confirm:hover { background: rgba(255,82,82,0.18); }
+
+        @media (max-width: 380px) { .days-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+    <div class="auth-box">
+        <div class="auth-logo">Ezekiel<span>.</span></div>
+        <div class="auth-sub">Workout Tracker</div>
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')">Login</button>
+            <button class="auth-tab" onclick="switchTab('register')">Cadastro</button>
+        </div>
+        <div id="login-form">
+            <div class="field-group"><label>Email</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
+            <div class="field-group"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+            <button class="btn-primary" onclick="doLogin()">Entrar</button>
+        </div>
+        <div id="register-form" style="display:none">
+            <div class="field-group"><label>Nome</label><input type="text" id="reg-name" placeholder="Seu nome"></div>
+            <div class="field-group"><label>Email</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
+            <div class="field-group"><label>Senha</label><input type="password" id="reg-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()"></div>
+            <button class="btn-primary" onclick="doRegister()">Criar conta</button>
+        </div>
+        <div class="auth-msg" id="auth-msg"></div>
+    </div>
+</div>
+
+<!-- APP -->
+<div id="app-screen">
+    <div class="topbar">
+        <div class="topbar-logo">Ezekiel<span>.</span></div>
+        <div class="topbar-user">
+            <span id="user-display"></span>
+            <button class="btn-logout" onclick="doLogout()">Sair</button>
+        </div>
+    </div>
+    <div class="main">
+        <div class="section-label">Dia de treino</div>
+        <div class="days-grid" id="days-grid"></div>
+        <div id="day-content"></div>
+    </div>
+    <div class="finish-bar">
+        <button class="btn-finish" id="btn-finish" onclick="finishWorkout()" style="display:none">Finalizar Treino</button>
+    </div>
+</div>
+
+<!-- MODAL DELETE -->
+<div class="modal-overlay" id="modal-del">
+    <div class="modal-box">
+        <div class="modal-title">Remover exercício</div>
+        <div class="modal-text">Tem certeza? O exercício e todos os registros serão excluídos.</div>
+        <div class="modal-btns">
+            <button class="modal-btn-cancel" onclick="closeModal()">Cancelar</button>
+            <button class="modal-btn-confirm" onclick="confirmDelete()">Remover</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = '';
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('userId');
+    let userName = localStorage.getItem('userName');
+    let currentDayId = null;
+    let currentDayKey = null;
+    let workoutLogs = {};
+    let deleteTargetId = null;
+    let saveTimers = {};
+
+    const DAYS = [
+      { key: 'SEGUNDA', label: 'Seg', sub: 'Braço & Ombro' },
+      { key: 'TERCA',   label: 'Ter', sub: 'Descanso', rest: true },
+      { key: 'QUARTA',  label: 'Qua', sub: 'Peito & Costa' },
+      { key: 'QUINTA',  label: 'Qui', sub: 'Perna' },
+      { key: 'SEXTA',   label: 'Sex', sub: 'Upper' },
+      { key: 'SABADO',  label: 'Sáb', sub: 'Pernas' },
+    ];
+
+    function h() { return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }; }
+
+    function showMsg(msg, type) {
+      const el = document.getElementById('auth-msg');
+      el.textContent = msg;
+      el.className = `auth-msg ${type}`;
+      el.style.display = 'block';
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach((t, i) => t.classList.toggle('active', i === (tab === 'login' ? 0 : 1)));
+      document.getElementById('login-form').style.display = tab === 'login' ? '' : 'none';
+      document.getElementById('register-form').style.display = tab === 'register' ? '' : 'none';
+      document.getElementById('auth-msg').style.display = 'none';
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-pass').value;
+      if (!email || !pass) return showMsg('Preencha todos os campos', 'error');
+      try {
+        const r = await fetch(`/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: pass }) });
+        if (!r.ok) return showMsg('Email ou senha incorretos', 'error');
+        const d = await r.json();
+        token = d.token;
+        localStorage.setItem('token', token);
+        await loadUserInfo(email);
+        initApp();
+      } catch { showMsg('Erro de conexão com o servidor', 'error'); }
+    }
+
+    async function doRegister() {
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass = document.getElementById('reg-pass').value;
+      if (!name || !email || !pass) return showMsg('Preencha todos os campos', 'error');
+      try {
+        const r = await fetch(`/api/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pass }) });
+        if (!r.ok) return showMsg('Email já cadastrado', 'error');
+        document.getElementById('login-email').value = email;
+        switchTab('login');
+        showMsg('Conta criada! Faça login.', 'success');
+      } catch { showMsg('Erro de conexão', 'error'); }
+    }
+
+    async function loadUserInfo(email) {
+      try {
+        const r = await fetch(`/api/users`, { headers: h() });
+        const users = await r.json();
+        const user = users.find(u => u.email === email);
+        if (user) { userId = user.id; userName = user.name; localStorage.setItem('userId', userId); localStorage.setItem('userName', userName); }
+      } catch {}
+    }
+
+    function doLogout() {
+      localStorage.clear(); token = null; userId = null; userName = null; currentDayId = null;
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+
+    function initApp() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      document.getElementById('user-display').textContent = userName || '';
+      renderDays();
+      document.getElementById('day-content').innerHTML = `<div class="empty-state">Selecione um dia para começar 💪</div>`;
+    }
+
+    function renderDays() {
+      document.getElementById('days-grid').innerHTML = DAYS.map(d => `
+        <button class="day-btn ${d.rest ? 'rest' : ''} ${d.key === currentDayKey ? 'active' : ''}" onclick="selectDay('${d.key}', this)">
+          ${d.label}<span class="day-sub">${d.sub}</span>
+        </button>`).join('');
+    }
+
+    async function selectDay(dayKey, btn) {
+      currentDayKey = dayKey;
+      document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('day-content').innerHTML = '<div class="loading">Carregando...</div>';
+      document.getElementById('btn-finish').style.display = 'none';
+
+      try {
+        const r = await fetch(`/api/training-days/day/${dayKey}`, { headers: h() });
+        if (!r.ok) { document.getElementById('day-content').innerHTML = '<div class="loading">Dia não encontrado.</div>'; return; }
+        const day = await r.json();
+        currentDayId = day.id;
+
+        const lr = await fetch(`/api/workout-logs/user/${userId}/training-day/${day.id}`, { headers: h() });
+        const logs = lr.ok ? await lr.json() : [];
+        workoutLogs = {};
+        logs.forEach(l => { workoutLogs[l.exercise.id] = l; });
+
+        renderDayContent(day.exercises || []);
+      } catch { document.getElementById('day-content').innerHTML = '<div class="loading">Erro ao carregar.</div>'; }
+    }
+
+    function renderDayContent(exercises) {
+      const c = document.getElementById('day-content');
+      c.innerHTML = `
+        <div class="section-label">Exercícios</div>
+        <div class="add-exercise-row">
+          <input class="add-exercise-input" id="new-ex-input" placeholder="Nome do exercício..." onkeydown="if(event.key==='Enter')addExercise()">
+          <button class="btn-add" onclick="addExercise()">+ Adicionar</button>
+        </div>
+        <div class="exercises-wrap" id="exercises-wrap">
+          ${exercises.length ? exercises.map(ex => renderExCard(ex)).join('') : '<div class="loading">Nenhum exercício ainda. Adicione um acima!</div>'}
+        </div>`;
+      if (exercises.length) document.getElementById('btn-finish').style.display = 'block';
+    }
+
+    function renderExCard(ex) {
+      const log = workoutLogs[ex.id] || {};
+      const done = log.done || false;
+      return `
+      <div class="exercise-card ${done ? 'done' : ''}" id="ex-${ex.id}">
+        <div class="ex-header" onclick="toggleCard(${ex.id}, event)">
+          <div class="ex-left">
+            <span class="ex-name">${ex.nome || ex.name}</span>
+          </div>
+          <div class="ex-actions">
+            <div class="check-btn ${done ? 'checked' : ''}" onclick="toggleDone(${ex.id}, event)"></div>
+            <div class="del-btn" onclick="askDelete(${ex.id}, event)">×</div>
+            <div class="chevron"></div>
+          </div>
+        </div>
+        <div class="ex-body">
+          <div class="ex-fields">
+            <div class="ex-f"><label>Séries</label><input type="number" id="s-${ex.id}" value="${log.series || ''}" placeholder="0" oninput="debounceSave(${ex.id})"></div>
+            <div class="ex-f"><label>Reps</label><input type="number" id="r-${ex.id}" value="${log.reps || ''}" placeholder="0" oninput="debounceSave(${ex.id})"></div>
+            <div class="ex-f"><label>Carga kg</label><input type="number" id="w-${ex.id}" value="${log.weight || ''}" placeholder="0.0" oninput="debounceSave(${ex.id})"></div>
+            <div class="ex-f obs-f"><label>Obs</label><input type="text" id="o-${ex.id}" value="${log.obs || ''}" placeholder="..." oninput="debounceSave(${ex.id})"></div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    async function addExercise() {
+      const input = document.getElementById('new-ex-input');
+      const nome = input.value.trim();
+      if (!nome) return;
+      try {
+        const r = await fetch(`/api/exercise`, { method: 'POST', headers: h(), body: JSON.stringify({ nome, trainingDay: { id: currentDayId } }) });
+        if (!r.ok) return;
+        const ex = await r.json();
+        input.value = '';
+        const wrap = document.getElementById('exercises-wrap');
+        const empty = wrap.querySelector('.loading');
+        if (empty) empty.remove();
+        wrap.insertAdjacentHTML('beforeend', renderExCard(ex));
+        document.getElementById('btn-finish').style.display = 'block';
+      } catch { alert('Erro ao adicionar exercício'); }
+    }
+
+    function askDelete(exId, e) {
+      e.stopPropagation();
+      deleteTargetId = exId;
+      document.getElementById('modal-del').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modal-del').style.display = 'none';
+      deleteTargetId = null;
+    }
+
+    async function confirmDelete() {
+      if (!deleteTargetId) return closeModal();
+      const id = deleteTargetId;
+      closeModal();
+      const log = workoutLogs[id];
+      try {
+        if (log?.id) await fetch(`/api/workout-logs/${log.id}`, { method: 'DELETE', headers: h() });
+        await fetch(`/api/exercise/${id}`, { method: 'DELETE', headers: h() });
+        document.getElementById(`ex-${id}`)?.remove();
+        delete workoutLogs[id];
+        const wrap = document.getElementById('exercises-wrap');
+        if (!wrap?.querySelector('.exercise-card')) {
+          wrap.innerHTML = '<div class="loading">Nenhum exercício ainda. Adicione um acima!</div>';
+          document.getElementById('btn-finish').style.display = 'none';
+        }
+      } catch { alert('Erro ao remover exercício'); }
+    }
+
+    function toggleCard(id, e) {
+      if (e.target.closest('.check-btn') || e.target.closest('.del-btn')) return;
+      document.getElementById(`ex-${id}`)?.classList.toggle('open');
+    }
+
+    async function toggleDone(id, e) {
+      e.stopPropagation();
+      const card = document.getElementById(`ex-${id}`);
+      const isDone = !card.classList.contains('done');
+      card.classList.toggle('done', isDone);
+      card.querySelector('.check-btn').classList.toggle('checked', isDone);
+      await saveLog(id, isDone);
+    }
+
+    function debounceSave(id) {
+      clearTimeout(saveTimers[id]);
+      saveTimers[id] = setTimeout(() => saveLog(id), 800);
+    }
+
+    async function saveLog(exId, forceDone) {
+      const series = document.getElementById(`s-${exId}`)?.value;
+      const reps = document.getElementById(`r-${exId}`)?.value;
+      const weight = document.getElementById(`w-${exId}`)?.value;
+      const obs = document.getElementById(`o-${exId}`)?.value;
+      const card = document.getElementById(`ex-${exId}`);
+      const done = forceDone !== undefined ? forceDone : card?.classList.contains('done') || false;
+
+      const body = {
+        exercise: { id: exId },
+        user: { id: parseInt(userId) },
+        series: series ? parseInt(series) : null,
+        reps: reps ? parseInt(reps) : null,
+        weight: weight ? parseFloat(weight) : null,
+        obs: obs || null,
+        done
+      };
+
+      try {
+        const log = workoutLogs[exId];
+        if (log?.id) {
+          await fetch(`/api/workout-logs/${log.id}`, { method: 'PUT', headers: h(), body: JSON.stringify({ ...body, id: log.id }) });
+        } else {
+          const r = await fetch(`/api/workout-logs`, { method: 'POST', headers: h(), body: JSON.stringify(body) });
+          if (r.ok) { const nl = await r.json(); workoutLogs[exId] = nl; }
+        }
+      } catch {}
+    }
+
+    async function finishWorkout() {
+      if (!currentDayId) return;
+      const cards = document.querySelectorAll('.exercise-card');
+      if (!cards.length) return;
+      const allDone = Array.from(cards).every(c => c.classList.contains('done'));
+      if (!allDone) { alert('Conclui todos os exercícios antes de finalizar! 💪'); return; }
+      if (!confirm('Finalizar o treino de hoje?')) return;
+      alert('Treino finalizado! Vai dale! 🔥');
+      cards.forEach(c => {
+        c.classList.remove('done', 'open');
+        c.querySelector('.check-btn')?.classList.remove('checked');
+      });
+      workoutLogs = {};
+    }
+
+    if (token && userId) { initApp(); }
+    else { document.getElementById('auth-screen').style.display = 'flex'; }
+</script>
+</body>
+</html>
