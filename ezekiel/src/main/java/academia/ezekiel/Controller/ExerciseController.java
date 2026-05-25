@@ -1,9 +1,12 @@
 package academia.ezekiel.Controller;
 
 import academia.ezekiel.Modal.Exercise;
+import academia.ezekiel.Modal.User;
 import academia.ezekiel.Service.ExerciseService;
+import academia.ezekiel.Service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.List;
 public class ExerciseController {
 
     private final ExerciseService exerciseService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Exercise> findById(@PathVariable Long id){
@@ -22,11 +26,16 @@ public class ExerciseController {
 
     @GetMapping("/training-day/{trainingDayId}")
     public ResponseEntity<List<Exercise>> findByTrainingDayId(@PathVariable Long trainingDayId){
-        return ResponseEntity.ok(exerciseService.findByTrainingDayId(trainingDayId));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.findByEmail(email);
+        return ResponseEntity.ok(exerciseService.findByTrainingDayId(trainingDayId, user.getId()));
     }
 
     @PostMapping
     public ResponseEntity<Exercise> save(@RequestBody Exercise exercise){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.findByEmail(email);
+        exercise.setUser(user);
         return ResponseEntity.ok(exerciseService.save(exercise));
     }
 

@@ -1,4 +1,4 @@
-package academia.ezekiel.Config;
+ package academia.ezekiel.Config;
 
 import academia.ezekiel.Modal.TrainingDay;
 import academia.ezekiel.Repository.TrainingDayRepository;

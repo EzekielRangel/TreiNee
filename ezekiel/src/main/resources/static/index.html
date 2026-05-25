@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ezekiel — Treinos</title>
+    <title>TreiNee!</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -50,8 +50,11 @@
         /* APP */
         #app-screen { display: none; }
         .topbar { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 100; }
+        .topbar-brand { display: flex; align-items: center; gap: 0.6rem; }
         .topbar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em; }
         .topbar-logo span { color: var(--green); }
+        .btn-settings { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 0.95rem; cursor: pointer; transition: all 0.2s; line-height: 1; }
+        .btn-settings:hover { border-color: var(--green); color: var(--green); }
         .topbar-user { display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--muted); }
         .btn-logout { padding: 0.35rem 0.85rem; background: transparent; border: 1px solid var(--border-strong); border-radius: 6px; color: var(--muted); font-size: 0.78rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
         .btn-logout:hover { border-color: var(--red); color: var(--red); }
@@ -67,6 +70,13 @@
         .day-btn.active { background: var(--green-dim); border-color: var(--green); color: var(--green); }
         .day-btn.active .day-sub { color: rgba(0,230,118,0.55); }
         .day-btn.rest { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+        /* SETTINGS MODAL */
+        .settings-days { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem; }
+        .settings-day-row { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+        .settings-day-label { font-size: 0.88rem; color: var(--text); font-family: 'Syne', sans-serif; font-weight: 600; }
+        .toggle-btn { padding: 0.28rem 0.8rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; font-family: 'Syne', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); background: transparent; color: var(--muted); }
+        .toggle-btn.rest { background: var(--red-dim); border-color: rgba(255,82,82,0.3); color: var(--red); }
 
         /* EXERCISES */
         .exercises-wrap { display: flex; flex-direction: column; gap: 0; }
@@ -110,7 +120,7 @@
 
         /* FINISH */
         .finish-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 1rem 1.5rem; background: linear-gradient(to top, var(--bg) 65%, transparent); }
-        .btn-finish { width: 100%; max-width: 600px; margin: 0 auto; display: block; padding: 1rem; background: var(--green); color: #000; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 12px; cursor: pointer; transition: opacity 0.2s; }
+        .btn-finish { width: 100%; max-width: 600px; margin: 0 auto; display: block; padding: 1.3rem; background: var(--green); color: #000; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 14px; cursor: pointer; transition: opacity 0.2s; }
         .btn-finish:hover { opacity: 0.88; }
 
         /* LOADING */
@@ -135,21 +145,36 @@
 <!-- AUTH -->
 <div id="auth-screen">
     <div class="auth-box">
-        <div class="auth-logo">Ezekiel<span>.</span></div>
+        <div class="auth-logo">TreiNee<span>!</span></div>
         <div class="auth-sub">Workout Tracker</div>
         <div class="auth-tabs">
             <button class="auth-tab active" onclick="switchTab('login')">Login</button>
             <button class="auth-tab" onclick="switchTab('register')">Cadastro</button>
         </div>
         <div id="login-form">
-            <div class="field-group"><label>Email</label><input type="email" id="login-email" placeholder="seu@email.com"></div>
-            <div class="field-group"><label>Senha</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+            <div class="field-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="seu@email.com">
+            </div>
+            <div class="field-group">
+                <label for="login-pass">Senha</label>
+                <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+            </div>
             <button class="btn-primary" onclick="doLogin()">Entrar</button>
         </div>
         <div id="register-form" style="display:none">
-            <div class="field-group"><label>Nome</label><input type="text" id="reg-name" placeholder="Seu nome"></div>
-            <div class="field-group"><label>Email</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
-            <div class="field-group"><label>Senha</label><input type="password" id="reg-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()"></div>
+            <div class="field-group">
+                <label for="reg-name">Nome</label>
+                <input type="text" id="reg-name" placeholder="Seu nome">
+            </div>
+            <div class="field-group">
+                <label for="reg-email">Email</label>
+                <input type="email" id="reg-email" placeholder="seu@email.com">
+            </div>
+            <div class="field-group">
+                <label for="reg-pass">Senha</label>
+                <input type="password" id="reg-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doRegister()">
+            </div>
             <button class="btn-primary" onclick="doRegister()">Criar conta</button>
         </div>
         <div class="auth-msg" id="auth-msg"></div>
@@ -159,7 +184,10 @@
 <!-- APP -->
 <div id="app-screen">
     <div class="topbar">
-        <div class="topbar-logo">Ezekiel<span>.</span></div>
+        <div class="topbar-brand">
+            <div class="topbar-logo">TreiNee<span>!</span></div>
+            <button class="btn-settings" onclick="openSettings()" title="Configurações">⚙</button>
+        </div>
         <div class="topbar-user">
             <span id="user-display"></span>
             <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -172,6 +200,18 @@
     </div>
     <div class="finish-bar">
         <button class="btn-finish" id="btn-finish" onclick="finishWorkout()" style="display:none">Finalizar Treino</button>
+    </div>
+</div>
+
+<!-- MODAL SETTINGS -->
+<div class="modal-overlay" id="modal-settings">
+    <div class="modal-box">
+        <div class="modal-title">Configurações</div>
+        <div class="modal-text">Marque os dias de descanso — eles ficarão desativados na grade.</div>
+        <div class="settings-days" id="settings-days-content"></div>
+        <div class="modal-btns" style="margin-top: 1.5rem">
+            <button class="modal-btn-cancel" onclick="closeSettings()">Fechar</button>
+        </div>
     </div>
 </div>
 
@@ -199,13 +239,14 @@
     let saveTimers = {};
 
     const DAYS = [
-      { key: 'SEGUNDA', label: 'Seg', sub: 'Braço & Ombro' },
-      { key: 'TERCA',   label: 'Ter', sub: 'Descanso', rest: true },
-      { key: 'QUARTA',  label: 'Qua', sub: 'Peito & Costa' },
-      { key: 'QUINTA',  label: 'Qui', sub: 'Perna' },
-      { key: 'SEXTA',   label: 'Sex', sub: 'Upper' },
-      { key: 'SABADO',  label: 'Sáb', sub: 'Pernas' },
+        { key: 'SEGUNDA', label: 'Segunda' },
+        { key: 'TERCA',   label: 'Terça'   },
+        { key: 'QUARTA',  label: 'Quarta'  },
+        { key: 'QUINTA',  label: 'Quinta'  },
+        { key: 'SEXTA',   label: 'Sexta'   },
+        { key: 'SABADO',  label: 'Sábado'  },
     ];
+    let restDays = JSON.parse(localStorage.getItem('restDays') || '[]');
 
     function h() { return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }; }
 
@@ -262,7 +303,10 @@
     }
 
     function doLogout() {
-      localStorage.clear(); token = null; userId = null; userName = null; currentDayId = null;
+      const savedRestDays = localStorage.getItem('restDays');
+      localStorage.clear();
+      if (savedRestDays) localStorage.setItem('restDays', savedRestDays);
+      token = null; userId = null; userName = null; currentDayId = null; currentDayKey = null;
       document.getElementById('app-screen').style.display = 'none';
       document.getElementById('auth-screen').style.display = 'flex';
     }
@@ -276,32 +320,50 @@
     }
 
     function renderDays() {
-      document.getElementById('days-grid').innerHTML = DAYS.map(d => `
-        <button class="day-btn ${d.rest ? 'rest' : ''} ${d.key === currentDayKey ? 'active' : ''}" onclick="selectDay('${d.key}', this)">
-          ${d.label}<span class="day-sub">${d.sub}</span>
-        </button>`).join('');
+        document.getElementById('days-grid').innerHTML = DAYS.map(d => {
+            const isRest = restDays.includes(d.key);
+            return `<button class="day-btn ${isRest ? 'rest' : ''} ${d.key === currentDayKey ? 'active' : ''}"
+                onclick="selectDay('${d.key}', this)">
+              ${d.label}
+              ${isRest ? '<span class="day-sub">descanso</span>' : ''}
+            </button>`;
+        }).join('');
     }
 
     async function selectDay(dayKey, btn) {
-      currentDayKey = dayKey;
-      document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('day-content').innerHTML = '<div class="loading">Carregando...</div>';
-      document.getElementById('btn-finish').style.display = 'none';
+        currentDayKey = dayKey;
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('day-content').innerHTML = '<div class="loading">Carregando...</div>';
+        document.getElementById('btn-finish').style.display = 'none';
 
-      try {
-        const r = await fetch(`/api/training-days/day/${dayKey}`, { headers: h() });
-        if (!r.ok) { document.getElementById('day-content').innerHTML = '<div class="loading">Dia não encontrado.</div>'; return; }
-        const day = await r.json();
-        currentDayId = day.id;
+        try {
+            let r = await fetch(`/api/training-days/day/${dayKey}`, { headers: h() });
+            let day;
+            if (r.status === 404) {
+                const cr = await fetch(`/api/training-days`, { method: 'POST', headers: h(), body: JSON.stringify({ weekDay: dayKey, description: '' }) });
+                if (!cr.ok) { document.getElementById('day-content').innerHTML = '<div class="loading">Erro ao inicializar dia.</div>'; return; }
+                day = await cr.json();
+            } else if (!r.ok) {
+                document.getElementById('day-content').innerHTML = '<div class="loading">Erro ao carregar dia.</div>'; return;
+            } else {
+                day = await r.json();
+            }
+            currentDayId = day.id;
 
-        const lr = await fetch(`/api/workout-logs/user/${userId}/training-day/${day.id}`, { headers: h() });
-        const logs = lr.ok ? await lr.json() : [];
-        workoutLogs = {};
-        logs.forEach(l => { workoutLogs[l.exercise.id] = l; });
+            const [exRes, lr] = await Promise.all([
+                fetch(`/api/exercise/training-day/${day.id}`, { headers: h() }),
+                fetch(`/api/workout-logs/user/${userId}/training-day/${day.id}`, { headers: h() })
+            ]);
 
-        renderDayContent(day.exercises || []);
-      } catch { document.getElementById('day-content').innerHTML = '<div class="loading">Erro ao carregar.</div>'; }
+            const exercises = exRes.ok ? await exRes.json() : [];
+            const logs = lr.ok ? await lr.json() : [];
+
+            workoutLogs = {};
+            logs.forEach(l => { workoutLogs[l.exercise.id] = l; });
+
+            renderDayContent(exercises);
+        } catch { document.getElementById('day-content').innerHTML = '<div class="loading">Erro ao carregar.</div>'; }
     }
 
     function renderDayContent(exercises) {
@@ -376,10 +438,9 @@
       if (!deleteTargetId) return closeModal();
       const id = deleteTargetId;
       closeModal();
-      const log = workoutLogs[id];
       try {
-        if (log?.id) await fetch(`/api/workout-logs/${log.id}`, { method: 'DELETE', headers: h() });
-        await fetch(`/api/exercise/${id}`, { method: 'DELETE', headers: h() });
+        const res = await fetch(`/api/exercise/${id}`, { method: 'DELETE', headers: h() });
+        if (!res.ok) { alert('Erro ao remover exercício'); return; }
         document.getElementById(`ex-${id}`)?.remove();
         delete workoutLogs[id];
         const wrap = document.getElementById('exercises-wrap');
@@ -451,6 +512,38 @@
         c.querySelector('.check-btn')?.classList.remove('checked');
       });
       workoutLogs = {};
+    }
+
+    function openSettings() {
+      document.getElementById('settings-days-content').innerHTML = DAYS.map(d => {
+        const isRest = restDays.includes(d.key);
+        return `<div class="settings-day-row">
+          <span class="settings-day-label">${d.label}</span>
+          <button class="toggle-btn ${isRest ? 'rest' : ''}" onclick="toggleRestDay('${d.key}', this)">
+            ${isRest ? 'Descanso' : 'Treino'}
+          </button>
+        </div>`;
+      }).join('');
+      document.getElementById('modal-settings').style.display = 'flex';
+    }
+
+    function closeSettings() {
+      document.getElementById('modal-settings').style.display = 'none';
+      renderDays();
+    }
+
+    function toggleRestDay(dayKey, btn) {
+      const idx = restDays.indexOf(dayKey);
+      if (idx === -1) {
+        restDays.push(dayKey);
+        btn.textContent = 'Descanso';
+        btn.classList.add('rest');
+      } else {
+        restDays.splice(idx, 1);
+        btn.textContent = 'Treino';
+        btn.classList.remove('rest');
+      }
+      localStorage.setItem('restDays', JSON.stringify(restDays));
     }
 
     if (token && userId) { initApp(); }

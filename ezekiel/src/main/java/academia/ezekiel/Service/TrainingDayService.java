@@ -5,7 +5,6 @@ import academia.ezekiel.Repository.TrainingDayRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
 import java.util.List;
 
 @Service
