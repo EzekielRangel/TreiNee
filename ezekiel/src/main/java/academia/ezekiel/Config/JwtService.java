@@ -3,6 +3,7 @@ package academia.ezekiel.Config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +13,11 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    // chave secreta - em producao coloque isso no application.properties
-    private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 24 horas
+
+    @Value("${secret.key}")
+    private String secretKey;
+
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
 
     public String generateToken(String email) {
         return Jwts.builder()
@@ -48,7 +51,7 @@ public class JwtService {
     }
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = hexStringToByteArray(SECRET_KEY);
+        byte[] keyBytes = hexStringToByteArray(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
