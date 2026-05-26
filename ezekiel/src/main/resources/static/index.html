@@ -316,7 +316,7 @@
       document.getElementById('app-screen').style.display = 'block';
       document.getElementById('user-display').textContent = userName || '';
       renderDays();
-      document.getElementById('day-content').innerHTML = `<div class="empty-state">Selecione um dia para começar 💪</div>`;
+      document.getElementById('day-content').innerHTML = `<div class="empty-state">Selecione um dia para começar</div>`;
     }
 
     function renderDays() {
@@ -504,9 +504,9 @@
       const cards = document.querySelectorAll('.exercise-card');
       if (!cards.length) return;
       const allDone = Array.from(cards).every(c => c.classList.contains('done'));
-      if (!allDone) { alert('Conclui todos os exercícios antes de finalizar! 💪'); return; }
+      if (!allDone) { alert('Complete todos os exercícios antes de finalizar'); return; }
       if (!confirm('Finalizar o treino de hoje?')) return;
-      alert('Treino finalizado! Vai dale! 🔥');
+      alert('Treino finalizado!');
       cards.forEach(c => {
         c.classList.remove('done', 'open');
         c.querySelector('.check-btn')?.classList.remove('checked');
