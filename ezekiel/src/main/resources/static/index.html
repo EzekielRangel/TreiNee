@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TreiNee!</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
@@ -39,7 +39,7 @@
         .auth-tab.active { color: var(--green); border-bottom-color: var(--green); }
         .field-group { margin-bottom: 1.25rem; }
         .field-group label { display: block; font-size: 0.7rem; font-weight: 500; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
-        .field-group input { width: 100%; padding: 0.85rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+        .field-group input { width: 100%; padding: 0.85rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .field-group input:focus { border-color: var(--green); }
         .btn-primary { width: 100%; padding: 0.9rem; background: var(--green); color: #000; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: none; border-radius: 8px; cursor: pointer; transition: opacity 0.2s; margin-top: 0.5rem; }
         .btn-primary:hover { opacity: 0.88; }
@@ -104,12 +104,12 @@
         .ex-fields { padding: 0 1.1rem 1.1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
         .ex-fields .obs-f { grid-column: 1 / -1; }
         .ex-f label { display: block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.35rem; }
-        .ex-f input { width: 100%; padding: 0.6rem 0.7rem; background: var(--subtle); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+        .ex-f input { width: 100%; padding: 0.6rem 0.7rem; background: var(--subtle); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .ex-f input:focus { border-color: var(--green); }
 
         /* ADD EXERCISE */
         .add-exercise-row { display: flex; gap: 0.6rem; margin-top: 0.25rem; margin-bottom: 1.5rem; }
-        .add-exercise-input { flex: 1; padding: 0.75rem 1rem; background: var(--card); border: 1px dashed var(--border-strong); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
+        .add-exercise-input { flex: 1; padding: 0.75rem 1rem; background: var(--card); border: 1px dashed var(--border-strong); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.2s; }
         .add-exercise-input:focus { border-color: var(--green); border-style: solid; }
         .add-exercise-input::placeholder { color: var(--muted); }
         .btn-add { padding: 0.75rem 1.1rem; background: var(--green-dim); border: 1px solid rgba(0,230,118,0.3); border-radius: 10px; color: var(--green); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
